@@ -1,0 +1,3 @@
+[db]
+# db_name = { uri = '...' }
+db_demo = { uri = 'postgres://user:secret@localhost:15432/demo_db' }
