@@ -59,6 +59,7 @@ func NewCommand() *cobra.Command {
 
 type duplicateRow struct {
 	Schema      string   `json:"schema"`
+	TableName   string   `json:"table_name"`
 	SizeHuman   string   `json:"size_human"`
 	SizeBytes   int64    `json:"size_bytes"`
 	KeepIndex   string   `json:"keep_index"`
@@ -71,6 +72,7 @@ func run(opts *Options) {
 	rawSql := `
        SELECT
           schema_name,
+          table_name,
           PG_SIZE_PRETTY(SUM(PG_RELATION_SIZE(idx))::BIGINT) AS size_human,
           SUM(PG_RELATION_SIZE(idx))::BIGINT AS size_bytes,
           (ARRAY_AGG(idx::REGCLASS::TEXT))[1] AS index1,
@@ -80,6 +82,7 @@ func run(opts *Options) {
        FROM (
           SELECT
              n.nspname AS schema_name,
+             indrelid::REGCLASS::TEXT AS table_name,
              indexrelid AS idx,
              (
                 indrelid::TEXT || E'\n' ||
@@ -99,7 +102,7 @@ func run(opts *Options) {
             AND n.nspname NOT IN ('pg_catalog', 'information_schema')
             AND n.nspname NOT LIKE 'pg_toast%'
        ) sub
-       GROUP BY schema_name, sub.key 
+       GROUP BY schema_name, table_name, sub.key 
        HAVING COUNT(*) > 1
        ORDER BY size_bytes DESC;
     `
@@ -140,6 +143,7 @@ func run(opts *Options) {
 
 		err := rows.Scan(
 			&r.Schema,
+			&r.TableName,
 			&r.SizeHuman,
 			&r.SizeBytes,
 			&idx1,
@@ -196,12 +200,13 @@ func run(opts *Options) {
 		}
 
 		table := tablewriter.NewWriter(os.Stdout)
-		table.Header([]string{"Schema", "Wasted Size", "Keep Index", "Drop Duplicate(s)"})
+		table.Header([]string{"Schema", "Table", "Wasted Size", "Keep Index", "Drop Duplicate(s)"})
 
 		for _, row := range results {
 			dropList := strings.Join(row.DropIndexes, ", ")
 			err := table.Append([]string{
 				row.Schema,
+				row.TableName,
 				row.SizeHuman,
 				row.KeepIndex,
 				dropList,
