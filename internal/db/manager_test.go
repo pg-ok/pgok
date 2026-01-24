@@ -14,23 +14,22 @@ func TestDbManager_Connect_DirectURI(t *testing.T) {
 		t.Skip("Skipping integration test in short mode")
 	}
 
+	// Given: A running PostgreSQL container and a DbManager instance
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 
-	// Setup test PostgreSQL container
 	testDB, err := SetupTestPostgres(ctx, t)
 	require.NoError(t, err, "Failed to setup test database")
 	defer testDB.Close(ctx)
 
-	// Create manager
 	manager := NewDbManager()
 
-	// Test connection with direct URI
+	// When: Connecting to the database using a direct connection URI
 	conn, err := manager.Connect(ctx, testDB.ConnectionString())
 	require.NoError(t, err, "Failed to connect to database")
 	defer conn.Close(ctx)
 
-	// Verify connection works
+	// Then: The connection should be established and executable queries should work
 	var result int
 	err = conn.QueryRow(ctx, "SELECT 1").Scan(&result)
 	require.NoError(t, err, "Failed to execute query")
@@ -42,6 +41,7 @@ func TestDbManager_Connect_PostgresScheme(t *testing.T) {
 		t.Skip("Skipping integration test in short mode")
 	}
 
+	// Given: A running PostgreSQL container with postgres:// scheme URI
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 
@@ -51,11 +51,12 @@ func TestDbManager_Connect_PostgresScheme(t *testing.T) {
 
 	manager := NewDbManager()
 
-	// Test with postgres:// scheme
+	// When: Connecting using postgres:// scheme
 	conn, err := manager.Connect(ctx, testDB.ConnectionString())
 	require.NoError(t, err, "Failed to connect with postgres:// scheme")
 	defer conn.Close(ctx)
 
+	// Then: The connection should work and return PostgreSQL version
 	var version string
 	err = conn.QueryRow(ctx, "SELECT version()").Scan(&version)
 	require.NoError(t, err, "Failed to query version")
@@ -63,13 +64,17 @@ func TestDbManager_Connect_PostgresScheme(t *testing.T) {
 }
 
 func TestDbManager_Connect_InvalidURI(t *testing.T) {
+	// Given: A DbManager instance and an invalid connection URI
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	manager := NewDbManager()
+	invalidURI := "postgres://invalid:invalid@localhost:9999/invalid"
 
-	// Test with invalid URI
-	conn, err := manager.Connect(ctx, "postgres://invalid:invalid@localhost:9999/invalid")
+	// When: Attempting to connect with the invalid URI
+	conn, err := manager.Connect(ctx, invalidURI)
+
+	// Then: The connection should fail with an error and return nil connection
 	assert.Error(t, err, "Should fail with invalid connection")
 	assert.Nil(t, conn, "Connection should be nil on error")
 }
@@ -124,7 +129,11 @@ func TestEncodePasswordInUri(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// Given: A connection string (from test case)
+			// When: Encoding the password in the URI
 			result := encodePasswordInUri(tt.input)
+
+			// Then: The password should be properly URL-encoded
 			assert.Equal(t, tt.expected, result)
 		})
 	}
@@ -135,22 +144,22 @@ func TestDbManager_Connect_WithEncodedPassword(t *testing.T) {
 		t.Skip("Skipping integration test in short mode")
 	}
 
+	// Given: A PostgreSQL container with a properly encoded connection string
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 
-	// Setup test PostgreSQL container with special characters in password
 	testDB, err := SetupTestPostgres(ctx, t)
 	require.NoError(t, err, "Failed to setup test database")
 	defer testDB.Close(ctx)
 
 	manager := NewDbManager()
 
-	// The connection string from testcontainers should already be properly encoded
+	// When: Connecting using the encoded connection string
 	conn, err := manager.Connect(ctx, testDB.ConnectionString())
 	require.NoError(t, err, "Failed to connect with encoded password")
 	defer conn.Close(ctx)
 
-	// Verify connection
+	// Then: The connection should work and queries should execute successfully
 	var result bool
 	err = conn.QueryRow(ctx, "SELECT true").Scan(&result)
 	require.NoError(t, err, "Failed to execute query")
