@@ -360,6 +360,9 @@ make test-short
 # Run tests with coverage report
 make test-coverage
 
+# Run linter
+make lint
+
 # View all available commands
 make help
 ```

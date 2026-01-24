@@ -35,7 +35,9 @@ db_test2 = { uri = "postgres://user:pass@localhost:5432/test2" }
 	// Change to temp directory for test
 	origDir, err := os.Getwd()
 	require.NoError(t, err)
-	defer os.Chdir(origDir)
+	defer func() {
+		_ = os.Chdir(origDir)
+	}()
 
 	err = os.Chdir(tmpDir)
 	require.NoError(t, err)
@@ -52,7 +54,7 @@ db_test2 = { uri = "postgres://user:pass@localhost:5432/test2" }
 	require.NoError(t, err)
 
 	// Restore stdout and read captured output
-	w.Close()
+	_ = w.Close()
 	os.Stdout = origStdout
 	capturedOutput, _ := io.ReadAll(r)
 	output := string(capturedOutput)
@@ -75,7 +77,9 @@ func TestAppDbList_WithoutConfigFile(t *testing.T) {
 	
 	origDir, err := os.Getwd()
 	require.NoError(t, err)
-	defer os.Chdir(origDir)
+	defer func() {
+		_ = os.Chdir(origDir)
+	}()
 
 	err = os.Chdir(tmpDir)
 	require.NoError(t, err)
@@ -98,8 +102,8 @@ func TestAppDbList_WithoutConfigFile(t *testing.T) {
 	require.NoError(t, err)
 
 	// Restore and read outputs
-	wOut.Close()
-	wErr.Close()
+	_ = wOut.Close()
+	_ = wErr.Close()
 	os.Stdout = origStdout
 	os.Stderr = origStderr
 	
@@ -134,7 +138,9 @@ func TestAppDbList_WithEmptyConfig(t *testing.T) {
 
 	origDir, err := os.Getwd()
 	require.NoError(t, err)
-	defer os.Chdir(origDir)
+	defer func() {
+		_ = os.Chdir(origDir)
+	}()
 
 	err = os.Chdir(tmpDir)
 	require.NoError(t, err)
@@ -157,8 +163,8 @@ func TestAppDbList_WithEmptyConfig(t *testing.T) {
 	require.NoError(t, err)
 
 	// Restore and read outputs
-	wOut.Close()
-	wErr.Close()
+	_ = wOut.Close()
+	_ = wErr.Close()
 	os.Stdout = origStdout
 	os.Stderr = origStderr
 	

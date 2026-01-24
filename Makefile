@@ -1,4 +1,4 @@
-.PHONY: help build test test-short test-integration test-coverage clean
+.PHONY: help build test test-short test-integration test-coverage lint clean
 
 # Default target
 help:
@@ -8,6 +8,7 @@ help:
 	@echo "  test-short       - Run only unit tests (skip integration)"
 	@echo "  test-integration - Run only integration tests"
 	@echo "  test-coverage    - Run tests with coverage report"
+	@echo "  lint             - Run golangci-lint"
 	@echo "  clean            - Clean build artifacts and test cache"
 
 # Build the binary
@@ -31,6 +32,10 @@ test-coverage:
 	go test -v -coverprofile=coverage.out ./...
 	go tool cover -html=coverage.out -o coverage.html
 	@echo "Coverage report generated: coverage.html"
+
+# Run linter
+lint:
+	golangci-lint run ./...
 
 # Clean build artifacts
 clean:

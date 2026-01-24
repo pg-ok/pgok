@@ -95,7 +95,9 @@ func (tc *TestPostgresContainer) ExecSQL(ctx context.Context, sql string) error 
 	if err != nil {
 		return fmt.Errorf("failed to connect: %w", err)
 	}
-	defer conn.Close(ctx)
+	defer func() {
+		_ = conn.Close(ctx)
+	}()
 
 	_, err = conn.Exec(ctx, sql)
 	if err != nil {

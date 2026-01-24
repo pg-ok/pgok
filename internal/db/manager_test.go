@@ -20,14 +20,18 @@ func TestDbManager_Connect_DirectURI(t *testing.T) {
 
 	testDB, err := SetupTestPostgres(ctx, t)
 	require.NoError(t, err, "Failed to setup test database")
-	defer testDB.Close(ctx)
+	defer func() {
+		assert.NoError(t, testDB.Close(ctx))
+	}()
 
 	manager := NewDbManager()
 
 	// When: Connecting to the database using a direct connection URI
 	conn, err := manager.Connect(ctx, testDB.ConnectionString())
 	require.NoError(t, err, "Failed to connect to database")
-	defer conn.Close(ctx)
+	defer func() {
+		assert.NoError(t, conn.Close(ctx))
+	}()
 
 	// Then: The connection should be established and executable queries should work
 	var result int
@@ -47,14 +51,18 @@ func TestDbManager_Connect_PostgresScheme(t *testing.T) {
 
 	testDB, err := SetupTestPostgres(ctx, t)
 	require.NoError(t, err, "Failed to setup test database")
-	defer testDB.Close(ctx)
+	defer func() {
+		assert.NoError(t, testDB.Close(ctx))
+	}()
 
 	manager := NewDbManager()
 
 	// When: Connecting using postgres:// scheme
 	conn, err := manager.Connect(ctx, testDB.ConnectionString())
 	require.NoError(t, err, "Failed to connect with postgres:// scheme")
-	defer conn.Close(ctx)
+	defer func() {
+		assert.NoError(t, conn.Close(ctx))
+	}()
 
 	// Then: The connection should work and return PostgreSQL version
 	var version string
@@ -150,14 +158,18 @@ func TestDbManager_Connect_WithEncodedPassword(t *testing.T) {
 
 	testDB, err := SetupTestPostgres(ctx, t)
 	require.NoError(t, err, "Failed to setup test database")
-	defer testDB.Close(ctx)
+	defer func() {
+		assert.NoError(t, testDB.Close(ctx))
+	}()
 
 	manager := NewDbManager()
 
 	// When: Connecting using the encoded connection string
 	conn, err := manager.Connect(ctx, testDB.ConnectionString())
 	require.NoError(t, err, "Failed to connect with encoded password")
-	defer conn.Close(ctx)
+	defer func() {
+		assert.NoError(t, conn.Close(ctx))
+	}()
 
 	// Then: The connection should work and queries should execute successfully
 	var result bool
