@@ -344,6 +344,34 @@ You will need Go 1.24+ installed.
 go build -o pgok main.go
 ```
 
+### Running Tests
+
+The project includes comprehensive unit and integration tests. Integration tests use [testcontainers-go](https://golang.testcontainers.org/) to automatically spin up PostgreSQL instances in Docker.
+
+#### Quick Start with Makefile
+
+```shell
+# Run all tests
+make test
+
+# Run only unit tests (fast, no Docker required)
+make test-short
+
+# Run tests with coverage report
+make test-coverage
+
+# View all available commands
+make help
+```
+
+#### Test Output
+
+Integration tests will automatically:
+1. Pull the PostgreSQL Docker image (first run only)
+2. Start a temporary PostgreSQL container
+3. Run tests against it
+4. Clean up the container after tests complete
+
 ### Docker Build
 
 For a consistent development environment without installing Rust locally, you can use Docker Compose.

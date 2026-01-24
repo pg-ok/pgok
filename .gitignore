@@ -3,3 +3,10 @@
 
 config/pgok.toml
 pgok
+
+# Test coverage
+coverage.out
+coverage.html
+
+# Project management
+todo.md
