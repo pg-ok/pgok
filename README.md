@@ -1,6 +1,8 @@
 # PG OK (pgok)
 
 <p align="center">
+<a href="https://github.com/pg-ok/pgok/actions"><img src="https://img.shields.io/github/actions/workflow/status/pg-ok/pgok/test.yml?style=flat-square" alt="Tests"></a>
+<a href="https://codecov.io/gh/pg-ok/pgok"><img src="https://img.shields.io/codecov/c/github/pg-ok/pgok?style=flat-square" alt="Coverage"></a>
 <a href="https://github.com/pg-ok/pgok/releases"><img src="https://img.shields.io/github/release/pg-ok/pgok.svg?style=flat-square" alt="Releases"></a>
 <a href="https://go.dev"><img src="https://img.shields.io/badge/go-1.24+-blue.svg?style=flat-square" alt="Go Version"></a>
 <a href="https://github.com/pg-ok/pgok/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pg-ok/pgok.svg?style=flat-square" alt="License"></a>
@@ -343,6 +345,37 @@ You will need Go 1.24+ installed.
 ```shell
 go build -o pgok main.go
 ```
+
+### Running Tests
+
+The project includes comprehensive unit and integration tests. Integration tests use [testcontainers-go](https://golang.testcontainers.org/) to automatically spin up PostgreSQL instances in Docker.
+
+#### Quick Start with Makefile
+
+```shell
+# Run all tests
+make test
+
+# Run only unit tests (fast, no Docker required)
+make test-short
+
+# Run tests with coverage report
+make test-coverage
+
+# Run linter
+make lint
+
+# View all available commands
+make help
+```
+
+#### Test Output
+
+Integration tests will automatically:
+1. Pull the PostgreSQL Docker image (first run only)
+2. Start a temporary PostgreSQL container
+3. Run tests against it
+4. Clean up the container after tests complete
 
 ### Docker Build
 
