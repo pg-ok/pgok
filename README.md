@@ -1,6 +1,8 @@
 # PG OK (pgok)
 
 <p align="center">
+<a href="https://github.com/pg-ok/pgok/actions"><img src="https://img.shields.io/github/actions/workflow/status/pg-ok/pgok/test.yml?style=flat-square" alt="Tests"></a>
+<a href="https://codecov.io/gh/pg-ok/pgok"><img src="https://img.shields.io/codecov/c/github/pg-ok/pgok?style=flat-square" alt="Coverage"></a>
 <a href="https://github.com/pg-ok/pgok/releases"><img src="https://img.shields.io/github/release/pg-ok/pgok.svg?style=flat-square" alt="Releases"></a>
 <a href="https://go.dev"><img src="https://img.shields.io/badge/go-1.24+-blue.svg?style=flat-square" alt="Go Version"></a>
 <a href="https://github.com/pg-ok/pgok/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pg-ok/pgok.svg?style=flat-square" alt="License"></a>

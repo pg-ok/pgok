@@ -181,7 +181,35 @@ Update documentation when you:
 
 ## Integration with CI/CD
 
-The project uses GitHub Actions with golangci-lint. Your changes will be automatically checked on push. Save time by running `make lint` locally first.
+The project uses GitHub Actions for automated testing and linting. On every push and pull request, the following checks are run:
+
+1. **Tests Job** (`.github/workflows/test.yml`)
+   - Runs on Ubuntu with Go 1.23
+   - Executes `make test` (all tests)
+   - Generates coverage report with `make test-coverage`
+   - Uploads coverage to Codecov (optional, requires `CODECOV_TOKEN` secret)
+
+2. **Lint Job** (`.github/workflows/test.yml`)
+   - Runs golangci-lint with latest version
+   - Must show 0 issues for the build to pass
+
+**Your changes will be automatically checked on push.** Save time by running `make lint` and `make test` locally first.
+
+### Setting Up CI/CD
+
+The workflow is already configured in `.github/workflows/test.yml`. To enable coverage reporting:
+
+1. Sign up at [codecov.io](https://codecov.io)
+2. Add your repository
+3. Add `CODECOV_TOKEN` to GitHub Secrets (Settings > Secrets and variables > Actions)
+4. Coverage badge will automatically appear in README.md
+
+### CI/CD Best Practices
+
+- All tests must pass before merging
+- Linter must show 0 issues
+- Maintain or improve coverage with each PR
+- Check the Actions tab on GitHub to see build status
 
 ## Useful Commands Reference
 
